@@ -70,6 +70,9 @@ public:
 
     void paint();
 
+    void setTextureSize(const QSize &size);
+    QSize textureSize() const { return m_textureSize; }
+
 private:
 
     QQuickPaintedItem::RenderTarget m_preferredRenderTarget;
@@ -92,6 +95,7 @@ private:
     bool m_fastFBOResizing;
     QColor m_fillColor;
     qreal m_contentsScale;
+    QSize m_textureSize;
 
     bool m_dirtyGeometry;
 };
