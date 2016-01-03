@@ -19,7 +19,6 @@
 #include "pluginmain.h"
 #include "context.h"
 #include "renderloop.h"
-#include "threadedrenderloop.h"
 
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformintegration.h>
@@ -43,11 +42,7 @@ QSGContext *ContextPlugin::create(const QString &) const
 
 QSGRenderLoop *ContextPlugin::createWindowManager()
 {
-    if (!QGuiApplicationPrivate::platformIntegration()->hasCapability(QPlatformIntegration::ThreadedPixmaps) ||
-        qgetenv("QSG_RENDER_LOOP") == QByteArrayLiteral("basic"))
-        return new RenderLoop();
-
-    return new ThreadedRenderLoop();
+    return new RenderLoop();
 }
 
 SoftwareContext::Context *ContextPlugin::instance = 0;

@@ -92,6 +92,8 @@ public:
 
     void paint(QPainter *painter);
 
+    QRectF rect() const;
+
 private:
     const QPixmap &pixmap() const;
 
