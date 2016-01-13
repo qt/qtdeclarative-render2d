@@ -40,6 +40,7 @@ public:
 
     void maybeUpdate(QQuickWindow *window);
     void update(QQuickWindow *window) { maybeUpdate(window); } // identical for this implementation.
+    void handleUpdateRequest(QQuickWindow *);
 
     void releaseResources(QQuickWindow *) { }
 
@@ -49,8 +50,6 @@ public:
 
     QSGContext *sceneGraphContext() const;
     QSGRenderContext *createRenderContext(QSGContext *) const { return rc; }
-
-    bool event(QEvent *);
 
     struct WindowData {
         bool updatePending : 1;
@@ -63,10 +62,6 @@ public:
     QSGRenderContext *rc;
 
     QImage grabContent;
-    int m_update_timer;
-
-    bool eventPending;
-
 };
 
 #endif // RENDERLOOP_H
