@@ -21,6 +21,8 @@
 #include "pixmaptexture.h"
 #include "imagenode.h"
 
+QT_BEGIN_NAMESPACE
+
 NinePatchNode::NinePatchNode()
 {
     setMaterial((QSGMaterial*)1);
@@ -83,3 +85,5 @@ QRectF NinePatchNode::bounds() const
 {
     return m_bounds;
 }
+
+QT_END_NAMESPACE

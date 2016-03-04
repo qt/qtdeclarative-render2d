@@ -21,6 +21,8 @@
 
 #include <QtGui/QPainter>
 
+QT_BEGIN_NAMESPACE
+
 RectangleNode::RectangleNode()
     : m_penWidth(0)
     , m_radius(0)
@@ -425,3 +427,5 @@ void RectangleNode::generateCornerPixmap()
         cornerPainter.end();
     }
 }
+
+QT_END_NAMESPACE

@@ -23,6 +23,8 @@
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformintegration.h>
 
+QT_BEGIN_NAMESPACE
+
 ContextPlugin::ContextPlugin(QObject *parent)
     : QSGContextPlugin(parent)
 {
@@ -47,5 +49,4 @@ QSGRenderLoop *ContextPlugin::createWindowManager()
 
 SoftwareContext::Context *ContextPlugin::instance = 0;
 
-
-
+QT_END_NAMESPACE

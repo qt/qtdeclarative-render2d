@@ -19,6 +19,8 @@
 
 #include "pixmaptexture.h"
 
+QT_BEGIN_NAMESPACE
+
 PixmapTexture::PixmapTexture(const QImage &image)
     // Prevent pixmap format conversion to reduce memory consumption
     // and surprises in calling code. (See QTBUG-47328)
@@ -56,3 +58,5 @@ void PixmapTexture::bind()
 {
     Q_UNREACHABLE();
 }
+
+QT_END_NAMESPACE

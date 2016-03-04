@@ -19,6 +19,8 @@
 
 #include "glyphnode.h"
 
+QT_BEGIN_NAMESPACE
+
 GlyphNode::GlyphNode()
     : m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 0)
     , m_style(QQuickText::Normal)
@@ -90,3 +92,5 @@ void GlyphNode::paint(QPainter *painter)
     painter->setPen(m_color);
     painter->drawGlyphRun(pos, m_glyphRun);
 }
+
+QT_END_NAMESPACE

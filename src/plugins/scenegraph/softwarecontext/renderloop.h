@@ -25,6 +25,8 @@
 
 #include <private/qsgrenderloop_p.h>
 
+QT_BEGIN_NAMESPACE
+
 class RenderLoop : public QSGRenderLoop
 {
     Q_OBJECT
@@ -66,5 +68,7 @@ public:
 
     QImage grabContent;
 };
+
+QT_END_NAMESPACE
 
 #endif // RENDERLOOP_H

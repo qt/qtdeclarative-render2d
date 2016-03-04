@@ -30,6 +30,8 @@
 
 #include "context.h"
 
+QT_BEGIN_NAMESPACE
+
 class ContextPlugin : public QSGContextPlugin
 {
     Q_OBJECT
@@ -45,5 +47,7 @@ public:
 
     static SoftwareContext::Context *instance;
 };
+
+QT_END_NAMESPACE
 
 #endif // PLUGINMAIN_H

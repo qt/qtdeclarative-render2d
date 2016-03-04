@@ -24,6 +24,8 @@
 #include <private/qquickprofiler_p.h>
 #include <QCoreApplication>
 
+QT_BEGIN_NAMESPACE
+
 RenderLoop::RenderLoop()
 {
     sg = QSGContext::createDefaultContext();
@@ -201,3 +203,5 @@ void RenderLoop::handleUpdateRequest(QQuickWindow *window)
 {
     renderWindow(window);
 }
+
+QT_END_NAMESPACE
