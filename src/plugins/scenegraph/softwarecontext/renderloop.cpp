@@ -23,6 +23,7 @@
 #include <QElapsedTimer>
 #include <private/qquickprofiler_p.h>
 #include <QCoreApplication>
+#include <qpa/qplatformbackingstore.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -122,7 +123,7 @@ void RenderLoop::renderWindow(QQuickWindow *window)
         renderTime = renderTimer.nsecsElapsed();
 
     if (data.grabOnly) {
-        // #### grabContent = qt_gl_read_framebuffer(window->size() * window->devicePixelRatio(), false, false);
+        grabContent = static_cast<SoftwareContext::Renderer*>(cd->renderer)->backingStore()->handle()->toImage();
         data.grabOnly = false;
     }
 
