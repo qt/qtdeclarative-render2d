@@ -145,7 +145,7 @@ void AbstractSoftwareRenderer::optimizeRenderList()
 {
     // Iterate through the renderlist from front to back
     // Objective is to update the dirty status and rects.
-    for (auto i = m_renderableNodes.rbegin(); i != m_renderableNodes.rend(); ++i) {
+    for (auto i = m_renderableNodes.end()-1; i != m_renderableNodes.begin(); --i) {
         auto node = *i;
         if (!m_dirtyRegion.isEmpty()) {
             // See if the current dirty regions apply to the current node
