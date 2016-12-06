@@ -20,6 +20,9 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgcontext_p.h>
 #include <private/qsgrenderer_p.h>
 #include <private/qsgadaptationlayer_p.h>

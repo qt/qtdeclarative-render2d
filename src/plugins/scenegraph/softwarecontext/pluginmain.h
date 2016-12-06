@@ -20,6 +20,9 @@
 #ifndef PLUGINMAIN_H
 #define PLUGINMAIN_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgcontext_p.h>
 #include <private/qsgcontextplugin_p.h>
 

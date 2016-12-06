@@ -16,7 +16,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "pluginmain.h"
 #include "context.h"
 #include "renderloop.h"

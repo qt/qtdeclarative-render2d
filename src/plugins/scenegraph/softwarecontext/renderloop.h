@@ -20,6 +20,9 @@
 #ifndef RENDERLOOP_H
 #define RENDERLOOP_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgrenderloop_p.h>
 
 class RenderLoop : public QSGRenderLoop

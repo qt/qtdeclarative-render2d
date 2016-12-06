@@ -16,7 +16,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "imagenode.h"
 
 #include "pixmaptexture.h"

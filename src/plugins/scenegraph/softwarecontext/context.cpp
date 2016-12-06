@@ -16,7 +16,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "context.h"
 
 #include "rectanglenode.h"

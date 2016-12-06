@@ -20,6 +20,9 @@
 #ifndef RECTANGLENODE_H
 #define RECTANGLENODE_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgadaptationlayer_p.h>
 
 #include <QPen>

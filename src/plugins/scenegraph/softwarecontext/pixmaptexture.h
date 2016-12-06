@@ -20,6 +20,9 @@
 #ifndef PIXMAPTEXTURE_H
 #define PIXMAPTEXTURE_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgtexture_p.h>
 
 class PixmapTexture : public QSGTexture
