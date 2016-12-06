@@ -30,6 +30,9 @@
 #ifndef PIXMAPRENDERER_H
 #define PIXMAPRENDERER_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include "abstractsoftwarerenderer.h"
 
 QT_BEGIN_NAMESPACE

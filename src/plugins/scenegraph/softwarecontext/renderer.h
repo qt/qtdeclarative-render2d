@@ -30,6 +30,9 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include "abstractsoftwarerenderer.h"
 
 #include <QtGui/QBackingStore>

@@ -30,6 +30,9 @@
 #ifndef RENDERABLENODE_H
 #define RENDERABLENODE_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <QtGui/QRegion>
 #include <QtCore/QRect>
 #include <QtGui/QTransform>

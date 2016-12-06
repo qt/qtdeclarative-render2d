@@ -30,6 +30,9 @@
 #ifndef RENDERABLENODEUPDATER_H
 #define RENDERABLENODEUPDATER_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include "renderablenode.h"
 #include "abstractsoftwarerenderer.h"
 

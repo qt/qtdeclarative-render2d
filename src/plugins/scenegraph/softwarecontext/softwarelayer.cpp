@@ -154,6 +154,22 @@ void SoftwareLayer::setDevicePixelRatio(qreal ratio)
     m_device_pixel_ratio = ratio;
 }
 
+void SoftwareLayer::setMirrorHorizontal(bool mirror)
+{
+    if (m_mirrorHorizontal == mirror)
+        return;
+    m_mirrorHorizontal = mirror;
+    markDirtyTexture();
+}
+
+void SoftwareLayer::setMirrorVertical(bool mirror)
+{
+    if (m_mirrorVertical == mirror)
+        return;
+    m_mirrorVertical = mirror;
+    markDirtyTexture();
+}
+
 void SoftwareLayer::markDirtyTexture()
 {
     m_dirtyTexture = true;

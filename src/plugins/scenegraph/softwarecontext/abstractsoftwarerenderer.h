@@ -30,6 +30,9 @@
 #ifndef ABSTRACTSOFTWARERENDERER_H
 #define ABSTRACTSOFTWARERENDERER_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgrenderer_p.h>
 
 #include <QtCore/QHash>

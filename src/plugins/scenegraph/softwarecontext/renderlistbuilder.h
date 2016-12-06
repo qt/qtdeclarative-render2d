@@ -36,7 +36,6 @@ class RenderListBuilder : public QSGNodeVisitorEx
 public:
     RenderListBuilder(AbstractSoftwareRenderer *renderer);
 
-<<<<<<< HEAD:src/plugins/scenegraph/softwarecontext/renderingvisitor.h
     virtual bool visit(QSGTransformNode *node);
     virtual void endVisit(QSGTransformNode *);
     virtual bool visit(QSGClipNode *node);
@@ -57,28 +56,6 @@ public:
     virtual void endVisit(QSGNinePatchNode *);
     virtual bool visit(QSGRootNode *);
     virtual void endVisit(QSGRootNode *);
-=======
-    bool visit(QSGTransformNode *) override;
-    void endVisit(QSGTransformNode *) override;
-    bool visit(QSGClipNode *) override;
-    void endVisit(QSGClipNode *) override;
-    bool visit(QSGGeometryNode *) override;
-    void endVisit(QSGGeometryNode *) override;
-    bool visit(QSGOpacityNode *) override;
-    void endVisit(QSGOpacityNode *) override;
-    bool visit(QSGImageNode *) override;
-    void endVisit(QSGImageNode *) override;
-    bool visit(QSGPainterNode *) override;
-    void endVisit(QSGPainterNode *) override;
-    bool visit(QSGRectangleNode *) override;
-    void endVisit(QSGRectangleNode *) override;
-    bool visit(QSGGlyphNode *) override;
-    void endVisit(QSGGlyphNode *) override;
-    bool visit(QSGNinePatchNode *) override;
-    void endVisit(QSGNinePatchNode *) override;
-    bool visit(QSGRootNode *) override;
-    void endVisit(QSGRootNode *) override;
->>>>>>> 6afccbd... Partial update support:src/plugins/scenegraph/softwarecontext/renderlistbuilder.h
 
 private:
     bool addRenderableNode(QSGNode *node);
