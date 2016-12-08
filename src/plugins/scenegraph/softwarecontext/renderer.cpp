@@ -35,7 +35,7 @@
 #include "renderablenode.h"
 
 #include <QtGui/QPaintDevice>
-
+#include <QtGui/QBackingStore>
 #include <QElapsedTimer>
 
 Q_LOGGING_CATEGORY(lcRenderer, "qt.scenegraph.softwarecontext.renderer")
@@ -46,6 +46,8 @@ namespace SoftwareContext {
 
 Renderer::Renderer(QSGRenderContext *context)
     : AbstractSoftwareRenderer(context)
+    , m_paintDevice(nullptr)
+    , m_backingStore(nullptr)
 {
 }
 
@@ -56,6 +58,13 @@ Renderer::~Renderer()
 void Renderer::setCurrentPaintDevice(QPaintDevice *device)
 {
     m_paintDevice = device;
+    m_backingStore = nullptr;
+}
+
+void Renderer::setBackingStore(QBackingStore *backingStore)
+{
+    m_backingStore = backingStore;
+    m_paintDevice = nullptr;
 }
 
 QRegion Renderer::flushRegion() const
@@ -75,13 +84,18 @@ void Renderer::renderScene(GLuint)
 
 void Renderer::render()
 {
+    if (!m_paintDevice && !m_backingStore)
+        return;
+
+    // If there is a backingstore, set the current paint device
+    if (m_backingStore)
+        m_paintDevice = m_backingStore->paintDevice();
+
     QElapsedTimer renderTimer;
 
     setBackgroundColor(clearColor());
-    setBackgroundSize(QSize(m_paintDevice->width(), m_paintDevice->height()));
-
-    QPainter painter(m_paintDevice);
-    painter.setRenderHint(QPainter::Antialiasing);
+    setBackgroundSize(QSize(m_paintDevice->width() / m_paintDevice->devicePixelRatio(),
+                            m_paintDevice->height() / m_paintDevice->devicePixelRatio()));
 
     // Build Renderlist
     // The renderlist is created by visiting each node in the tree and when a
@@ -102,12 +116,22 @@ void Renderer::render()
     // side effect of this is that additional nodes may need to be marked dirty to
     // force a repaint.  It is also important that any item that needs to be
     // repainted only paints what is needed, via the use of clip regions.
-    optimizeRenderList();
+    const QRegion updateRegion = optimizeRenderList();
     qint64 optimizeRenderListTime = renderTimer.restart();
+
+    // If Rendering to a backingstore, prepare it to be updated
+    if (m_backingStore != nullptr)
+        m_backingStore->beginPaint(updateRegion);
+
+    QPainter painter(m_paintDevice);
+    painter.setRenderHint(QPainter::Antialiasing);
 
     // Render the contents Renderlist
     m_flushRegion = renderNodes(&painter);
     qint64 renderTime = renderTimer.elapsed();
+
+    if (m_backingStore != nullptr)
+        m_backingStore->endPaint();
 
     qCDebug(lcRenderer) << "render" << m_flushRegion << buildRenderListTime << optimizeRenderListTime << renderTime;
 }

@@ -38,6 +38,7 @@
 QT_BEGIN_NAMESPACE
 
 class QPaintDevice;
+class QBackingStore;
 
 namespace SoftwareContext{
 
@@ -48,6 +49,7 @@ public:
     virtual ~Renderer();
 
     void setCurrentPaintDevice(QPaintDevice *device);
+    void setBackingStore(QBackingStore *backingStore);
     QRegion flushRegion() const;
 
 protected:
@@ -56,6 +58,7 @@ protected:
 
 private:
     QPaintDevice* m_paintDevice;
+    QBackingStore* m_backingStore;
     QRegion m_flushRegion;
 };
 
