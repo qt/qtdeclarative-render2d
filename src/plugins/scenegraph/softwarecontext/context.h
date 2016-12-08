@@ -51,7 +51,6 @@ public:
     QSGTexture *createTextureNoAtlas(const QImage &image) const;
     QSGRenderer *createRenderer();
 
-    QWindow *currentWindow;
     bool m_initialized;
 };
 

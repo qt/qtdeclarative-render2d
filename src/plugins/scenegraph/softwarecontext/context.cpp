@@ -75,7 +75,6 @@ namespace SoftwareContext
 
 RenderContext::RenderContext(QSGContext *ctx)
     : QSGRenderContext(ctx)
-    , currentWindow(0)
     , m_initialized(false)
 {
 }

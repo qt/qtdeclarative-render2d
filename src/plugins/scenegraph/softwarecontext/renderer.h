@@ -35,37 +35,28 @@
 
 #include "abstractsoftwarerenderer.h"
 
-#include <QtGui/QBackingStore>
-
-#ifdef QTQUICK2D_DEBUG_FLUSH
-#include <QtGui/QImage>
-#endif
-
 QT_BEGIN_NAMESPACE
 
-class QSGSimpleRectNode;
+class QPaintDevice;
 
 namespace SoftwareContext{
 
-class Renderer : public AbstractSoftwareRenderer
+class Q_QUICK_PRIVATE_EXPORT Renderer : public AbstractSoftwareRenderer
 {
 public:
     Renderer(QSGRenderContext *context);
     virtual ~Renderer();
 
-    QBackingStore *backingStore() const { return m_backingStore.data(); }
+    void setCurrentPaintDevice(QPaintDevice *device);
+    QRegion flushRegion() const;
 
 protected:
     void renderScene(GLuint fboId = 0) final;
     void render() final;
 
 private:
-    QScopedPointer<QBackingStore> m_backingStore;
-
-#ifdef QTQUICK2D_DEBUG_FLUSH
-    QVector<QRegion> m_previousFlushes;
-    QImage m_outputBuffer;
-#endif
+    QPaintDevice* m_paintDevice;
+    QRegion m_flushRegion;
 };
 
 } // namespace

@@ -65,12 +65,12 @@ void PixmapRenderer::render()
 
 }
 
-void PixmapRenderer::render(QPixmap *target)
+void PixmapRenderer::render(QPaintDevice *target)
 {
     QElapsedTimer renderTimer;
 
     // Setup background item
-    setBackgroundSize(target->size());
+    setBackgroundSize(QSize(target->width()/target->devicePixelRatio(), target->height()/target->devicePixelRatio()));
     setBackgroundColor(clearColor());
 
     QPainter painter(target);
