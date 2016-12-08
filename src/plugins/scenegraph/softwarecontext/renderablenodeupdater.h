@@ -79,6 +79,7 @@ private:
     struct NodeState {
         float opacity;
         QRegion clip;
+        bool hasClip;
         QTransform transform;
         QSGNode *parent;
     };
@@ -91,6 +92,7 @@ private:
     AbstractSoftwareRenderer *m_renderer;
     QStack<float> m_opacityState;
     QStack<QRegion> m_clipState;
+    bool m_hasClip;
     QStack<QTransform> m_transformState;
     QHash<QSGNode*,NodeState> m_stateMap;
 };
@@ -108,7 +110,7 @@ bool RenderableNodeUpdater::updateRenderableNode(RenderableNode::NodeType type, 
     //Update the node
     renderableNode->setTransform(m_transformState.top());
     renderableNode->setOpacity(m_opacityState.top());
-    renderableNode->setClipRegion(m_clipState.top());
+    renderableNode->setClipRegion(m_clipState.top(), m_hasClip);
 
     renderableNode->update();
     m_stateMap[node] = currentState(node);

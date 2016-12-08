@@ -50,6 +50,7 @@ RenderableNodeUpdater::RenderableNodeUpdater(AbstractSoftwareRenderer *renderer)
     m_opacityState.push(1.0f);
     // Invalid RectF by default for no clip
     m_clipState.push(QRegion());
+    m_hasClip = false;
     m_transformState.push(QTransform());
 }
 
@@ -73,10 +74,13 @@ void RenderableNodeUpdater::endVisit(QSGTransformNode *)
 bool RenderableNodeUpdater::visit(QSGClipNode *node)
 {
     // Make sure to translate the clip rect into world coordinates
-    if (m_clipState.top().isEmpty()) {
+    if (m_clipState.count() == 1) {
         m_clipState.push(m_transformState.top().map(QRegion(node->clipRect().toRect())));
-    } else
-        m_clipState.push(m_transformState.top().map(QRegion(node->clipRect().toRect()).intersected(m_clipState.top())));
+        m_hasClip = true;
+    } else {
+        const QRegion transformedClipRect = m_transformState.top().map(QRegion(node->clipRect().toRect()));
+        m_clipState.push(transformedClipRect.intersected(m_clipState.top()));
+    }
     m_stateMap[node] = currentState(node);
     return true;
 }
@@ -84,6 +88,8 @@ bool RenderableNodeUpdater::visit(QSGClipNode *node)
 void RenderableNodeUpdater::endVisit(QSGClipNode *)
 {
     m_clipState.pop();
+    if (m_clipState.count() == 1)
+        m_hasClip = false;
 }
 
 bool RenderableNodeUpdater::visit(QSGGeometryNode *node)
@@ -187,12 +193,13 @@ void RenderableNodeUpdater::updateNodes(QSGNode *node, bool isNodeRemoved)
         m_opacityState.push(state.opacity);
         m_transformState.push(state.transform);
         m_clipState.push(state.clip);
-
+        m_hasClip = state.hasClip;
     } else {
         // There is no parent, and no previous parent, so likely a root node
         m_opacityState.push(1.0f);
         m_transformState.push(QTransform());
         m_clipState.push(QRegion());
+        m_hasClip = false;
     }
 
     // If the node is being removed, then cleanup the state data
@@ -259,6 +266,7 @@ RenderableNodeUpdater::NodeState RenderableNodeUpdater::currentState(QSGNode *no
     NodeState state;
     state.opacity = m_opacityState.top();
     state.clip = m_clipState.top();
+    state.hasClip = m_hasClip;
     state.transform = m_transformState.top();
     state.parent = node->parent();
     return state;

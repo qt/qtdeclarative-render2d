@@ -77,7 +77,7 @@ public:
     bool isDirtyRegionEmpty() const;
 
     void setTransform(const QTransform &transform);
-    void setClipRegion(const QRegion &clipRegion);
+    void setClipRegion(const QRegion &clipRegion, bool hasClipRegion = true);
     void setOpacity(float opacity);
     QTransform transform() const { return m_transform; }
     QRegion clipRegion() const { return m_clipRegion; }
@@ -114,6 +114,7 @@ private:
 
     QTransform m_transform;
     QRegion m_clipRegion;
+    bool m_hasClipRegion;
     float m_opacity;
 
     QRect m_boundingRect;
