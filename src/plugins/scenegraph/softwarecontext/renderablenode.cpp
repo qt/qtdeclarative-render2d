@@ -150,8 +150,8 @@ void RenderableNode::update()
 
     m_boundingRect = m_transform.mapRect(boundingRect);
 
-    if (m_clipRect.isValid()) {
-        m_boundingRect = m_boundingRect.intersected(m_clipRect.toRect());
+    if (m_clipRegion.rectCount() == 1) {
+        m_boundingRect = m_boundingRect.intersected(m_clipRegion.rects().first());
     }
 
     // Overrides
@@ -178,6 +178,8 @@ QRegion RenderableNode::renderNode(QPainter *painter, bool forceOpaquePainting)
     // Set clipRegion to m_dirtyRegion (in world coordinates)
     // as m_dirtyRegion already accounts for clipRegion
     painter->setClipRegion(m_dirtyRegion, Qt::ReplaceClip);
+    if (m_clipRegion.rectCount() > 1)
+        painter->setClipRegion(m_clipRegion, Qt::IntersectClip);
 
     painter->setTransform(m_transform, false); //precalculated worldTransform
     if (forceOpaquePainting || m_isOpaque)
@@ -247,12 +249,12 @@ void RenderableNode::setTransform(const QTransform &transform)
     update();
 }
 
-void RenderableNode::setClipRect(const QRectF &clipRect)
+void RenderableNode::setClipRegion(const QRegion &clipRect)
 {
-    if (m_clipRect == clipRect)
+    if (m_clipRegion == clipRect)
         return;
 
-    m_clipRect = clipRect;
+    m_clipRegion = clipRect;
     update();
 }
 
