@@ -256,7 +256,7 @@ void AbstractSoftwareRenderer::nodeRemoved(QSGNode *node)
     // remove mapping
     if (renderable != nullptr) {
         // Need to mark this region dirty in the other nodes
-        QRegion dirtyRegion = renderable->previousDirtyRegion();
+        QRegion dirtyRegion = renderable->previousDirtyRegion(true);
         if (dirtyRegion.isEmpty())
             dirtyRegion = renderable->boundingRect();
         m_dirtyRegion += dirtyRegion;

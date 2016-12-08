@@ -303,8 +303,13 @@ void RenderableNode::subtractDirtyRegion(const QRegion &dirtyRegion)
     qCDebug(lcRenderable) << "subtractDirtyRegion: " << dirtyRegion << "old dirtyRegion" << prev << "new dirtyRegion: " << m_dirtyRegion;
 }
 
-QRegion RenderableNode::previousDirtyRegion() const
+QRegion RenderableNode::previousDirtyRegion(bool wasRemoved) const
 {
+    // When removing a node, the boundingRect shouldn't be subtracted
+    // because a deleted node has no valid boundingRect
+    if (wasRemoved)
+        return m_previousDirtyRegion;
+
     return m_previousDirtyRegion.subtracted(QRegion(m_boundingRect));
 }
 
