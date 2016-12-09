@@ -17,15 +17,24 @@
 **
 ****************************************************************************/
 
-#ifndef RENDERINGVISITOR_H
-#define RENDERINGVISITOR_H
+#ifndef RENDERLISTBUILDER_H
+#define RENDERLISTBUILDER_H
+
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
 
 #include <private/qsgadaptationlayer_p.h>
 
-class RenderingVisitor : public QSGNodeVisitorEx
+QT_BEGIN_NAMESPACE
+
+namespace SoftwareContext {
+
+class AbstractSoftwareRenderer;
+
+class RenderListBuilder : public QSGNodeVisitorEx
 {
 public:
-    RenderingVisitor(QPainter *painter);
+    RenderListBuilder(AbstractSoftwareRenderer *renderer);
 
     virtual bool visit(QSGTransformNode *node);
     virtual void endVisit(QSGTransformNode *);
@@ -49,7 +58,13 @@ public:
     virtual void endVisit(QSGRootNode *);
 
 private:
-    QPainter *painter;
+    bool addRenderableNode(QSGNode *node);
+
+    AbstractSoftwareRenderer *m_renderer;
 };
 
-#endif // RENDERINGVISITOR_H
+}
+
+QT_END_NAMESPACE
+
+#endif // RENDERLISTBUILDER_H

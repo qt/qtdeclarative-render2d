@@ -20,7 +20,12 @@
 #ifndef NINEPATCHNODE_H
 #define NINEPATCHNODE_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgadaptationlayer_p.h>
+
+QT_BEGIN_NAMESPACE
 
 class NinePatchNode : public QSGNinePatchNode
 {
@@ -35,11 +40,15 @@ public:
 
     void paint(QPainter *painter);
 
+    QRectF bounds() const;
+
 private:
     QPixmap m_pixmap;
     QRectF m_bounds;
     qreal m_pixelRatio;
     QMargins m_margins;
 };
+
+QT_END_NAMESPACE
 
 #endif // NINEPATCHNODE_H

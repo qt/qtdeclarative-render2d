@@ -20,7 +20,12 @@
 #ifndef PIXMAPTEXTURE_H
 #define PIXMAPTEXTURE_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgtexture_p.h>
+
+QT_BEGIN_NAMESPACE
 
 class PixmapTexture : public QSGTexture
 {
@@ -40,5 +45,7 @@ public:
 private:
     QPixmap m_pixmap;
 };
+
+QT_END_NAMESPACE
 
 #endif // PIXMAPTEXTURE_H

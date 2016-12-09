@@ -20,11 +20,16 @@
 #ifndef RECTANGLENODE_H
 #define RECTANGLENODE_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgadaptationlayer_p.h>
 
 #include <QPen>
 #include <QBrush>
 #include <QPixmap>
+
+QT_BEGIN_NAMESPACE
 
 class RectangleNode : public QSGRectangleNode
 {
@@ -44,6 +49,8 @@ public:
 
     void paint(QPainter *);
 
+    bool isOpaque() const;
+    QRectF rect() const;
 private:
     void paintRectangle(QPainter *painter, const QRect &rect);
     void generateCornerPixmap();
@@ -62,5 +69,7 @@ private:
 
     int m_devicePixelRatio;
 };
+
+QT_END_NAMESPACE
 
 #endif // RECTANGLENODE_H

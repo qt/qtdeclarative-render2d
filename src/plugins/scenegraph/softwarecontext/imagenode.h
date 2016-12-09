@@ -20,8 +20,13 @@
 #ifndef IMAGENODE_H
 #define IMAGENODE_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgadaptationlayer_p.h>
 #include <private/qsgtexturematerial_p.h>
+
+QT_BEGIN_NAMESPACE
 
 typedef QVarLengthArray<QPainter::PixmapFragment, 16> QPixmapFragmentsArray;
 
@@ -89,6 +94,8 @@ public:
 
     void paint(QPainter *painter);
 
+    QRectF rect() const;
+
 private:
     const QPixmap &pixmap() const;
 
@@ -106,5 +113,7 @@ private:
     bool m_tileVertical;
     bool m_cachedMirroredPixmapIsDirty;
 };
+
+QT_END_NAMESPACE
 
 #endif // IMAGENODE_H

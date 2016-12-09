@@ -20,8 +20,13 @@
 #ifndef SOFTWARELAYER_H
 #define SOFTWARELAYER_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgadaptationlayer_p.h>
 #include <private/qsgcontext_p.h>
+
+QT_BEGIN_NAMESPACE
 
 namespace SoftwareContext {
 class PixmapRenderer;
@@ -60,6 +65,8 @@ public:
     virtual void setFormat(GLenum);
     virtual void setHasMipmaps(bool);
     virtual void setDevicePixelRatio(qreal ratio);
+    virtual void setMirrorHorizontal(bool mirror);
+    virtual void setMirrorVertical(bool mirror);
 
 public slots:
     virtual void markDirtyTexture();
@@ -75,10 +82,14 @@ private:
     QSize m_size;
     QPixmap m_pixmap;
     qreal m_device_pixel_ratio;
+    bool m_mirrorHorizontal;
+    bool m_mirrorVertical;
     bool m_live;
     bool m_grab;
     bool m_recursive;
     bool m_dirtyTexture;
 };
+
+QT_END_NAMESPACE
 
 #endif // SOFTWARELAYER_H

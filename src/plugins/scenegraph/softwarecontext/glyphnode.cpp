@@ -19,6 +19,8 @@
 
 #include "glyphnode.h"
 
+QT_BEGIN_NAMESPACE
+
 GlyphNode::GlyphNode()
     : m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 0)
     , m_style(QQuickText::Normal)
@@ -32,6 +34,7 @@ void GlyphNode::setGlyphs(const QPointF &position, const QGlyphRun &glyphs)
 {
     m_position = position;
     m_glyphRun = glyphs;
+    m_bounding_rect = glyphs.boundingRect().translated(m_position - QPointF(0.0, glyphs.rawFont().ascent()));
 }
 
 void GlyphNode::setColor(const QColor &color)
@@ -67,25 +70,31 @@ void GlyphNode::paint(QPainter *painter)
     painter->setBrush(QBrush());
     QPointF pos = m_position - QPointF(0, m_glyphRun.rawFont().ascent());
 
+    qreal offset = 1.0;
+    if (painter->device()->devicePixelRatio() != 0)
+        offset = 1.0 / painter->device()->devicePixelRatio();
+
     switch (m_style) {
     case QQuickText::Normal: break;
     case QQuickText::Outline:
         painter->setPen(m_styleColor);
-        painter->drawGlyphRun(pos + QPointF(0, 1), m_glyphRun);
-        painter->drawGlyphRun(pos + QPointF(0, -1), m_glyphRun);
-        painter->drawGlyphRun(pos + QPointF(1, 0), m_glyphRun);
-        painter->drawGlyphRun(pos + QPointF(-1, 0), m_glyphRun);
+        painter->drawGlyphRun(pos + QPointF(0, offset), m_glyphRun);
+        painter->drawGlyphRun(pos + QPointF(0, -offset), m_glyphRun);
+        painter->drawGlyphRun(pos + QPointF(offset, 0), m_glyphRun);
+        painter->drawGlyphRun(pos + QPointF(-offset, 0), m_glyphRun);
         break;
     case QQuickText::Raised:
         painter->setPen(m_styleColor);
-        painter->drawGlyphRun(pos + QPointF(0, 1), m_glyphRun);
+        painter->drawGlyphRun(pos + QPointF(0, offset), m_glyphRun);
         break;
     case QQuickText::Sunken:
         painter->setPen(m_styleColor);
-        painter->drawGlyphRun(pos + QPointF(0, -1), m_glyphRun);
+        painter->drawGlyphRun(pos + QPointF(0, -offset), m_glyphRun);
         break;
     }
 
     painter->setPen(m_color);
     painter->drawGlyphRun(pos, m_glyphRun);
 }
+
+QT_END_NAMESPACE

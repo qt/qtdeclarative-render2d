@@ -16,11 +16,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "rectanglenode.h"
 #include <qmath.h>
 
 #include <QtGui/QPainter>
+
+QT_BEGIN_NAMESPACE
 
 RectangleNode::RectangleNode()
     : m_penWidth(0)
@@ -243,6 +244,30 @@ void RectangleNode::paint(QPainter *painter)
 
 }
 
+bool RectangleNode::isOpaque() const
+{
+    if (m_radius > 0.0f)
+        return false;
+    if (m_color.alpha() < 255)
+        return false;
+    if (m_penWidth > 0.0f && m_penColor.alpha() < 255)
+        return false;
+    if (m_stops.count() > 0) {
+        foreach (QGradientStop stop, m_stops) {
+            if (stop.second.alpha() < 255)
+                return false;
+        }
+    }
+
+    return true;
+}
+
+QRectF RectangleNode::rect() const
+{
+    //TODO: double check that this is correct.
+    return m_rect;
+}
+
 void RectangleNode::paintRectangle(QPainter *painter, const QRect &rect)
 {
     //Radius should never exceeds half of the width or half of the height
@@ -328,8 +353,7 @@ void RectangleNode::paintRectangle(QPainter *painter, const QRect &rect)
 
     }
 
-    int penWidth = qRound(m_penWidth);
-    QRectF brushRect = rect.marginsRemoved(QMargins(penWidth, penWidth, penWidth, penWidth));
+    QRectF brushRect = QRectF(rect).marginsRemoved(QMarginsF(m_penWidth, m_penWidth, m_penWidth, m_penWidth));
     if (brushRect.width() < 0)
         brushRect.setWidth(0);
     if (brushRect.height() < 0)
@@ -402,3 +426,5 @@ void RectangleNode::generateCornerPixmap()
         cornerPainter.end();
     }
 }
+
+QT_END_NAMESPACE

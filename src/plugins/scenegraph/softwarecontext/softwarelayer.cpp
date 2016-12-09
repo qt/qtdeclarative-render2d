@@ -20,6 +20,9 @@
 #include "softwarelayer.h"
 
 #include "context.h"
+#include "pixmaprenderer.h"
+
+QT_BEGIN_NAMESPACE
 
 SoftwareLayer::SoftwareLayer(QSGRenderContext *renderContext)
     : m_item(0)
@@ -151,6 +154,22 @@ void SoftwareLayer::setDevicePixelRatio(qreal ratio)
     m_device_pixel_ratio = ratio;
 }
 
+void SoftwareLayer::setMirrorHorizontal(bool mirror)
+{
+    if (m_mirrorHorizontal == mirror)
+        return;
+    m_mirrorHorizontal = mirror;
+    markDirtyTexture();
+}
+
+void SoftwareLayer::setMirrorVertical(bool mirror)
+{
+    if (m_mirrorVertical == mirror)
+        return;
+    m_mirrorVertical = mirror;
+    markDirtyTexture();
+}
+
 void SoftwareLayer::markDirtyTexture()
 {
     m_dirtyTexture = true;
@@ -188,6 +207,9 @@ void SoftwareLayer::grab()
     if (m_pixmap.size() != m_size) {
         m_pixmap = QPixmap(m_size);
         m_pixmap.setDevicePixelRatio(m_device_pixel_ratio);
+        // This fill here is wasteful, but necessary because it is the only way
+        // to force a QImage based pixmap to have an alpha channel.
+        m_pixmap.fill(Qt::transparent);
     }
 
     // Render texture.
@@ -198,10 +220,11 @@ void SoftwareLayer::grab()
 
     m_renderer->setDeviceRect(m_size);
     m_renderer->setViewportRect(m_size);
-    m_renderer->m_projectionRect = QRect(m_rect.x() * m_device_pixel_ratio,
-                                         m_rect.y() * m_device_pixel_ratio,
-                                         m_rect.width() * m_device_pixel_ratio,
-                                         m_rect.height() * m_device_pixel_ratio);
+    QRect mirrored(m_mirrorHorizontal ? m_rect.right() * m_device_pixel_ratio : m_rect.left() * m_device_pixel_ratio,
+                   m_mirrorVertical ? m_rect.top() * m_device_pixel_ratio : m_rect.bottom() * m_device_pixel_ratio,
+                   m_mirrorHorizontal ? -m_rect.width() * m_device_pixel_ratio : m_rect.width() * m_device_pixel_ratio,
+                   m_mirrorVertical ? m_rect.height() * m_device_pixel_ratio : -m_rect.height() * m_device_pixel_ratio);
+    m_renderer->setProjectionRect(mirrored);
     m_renderer->setClearColor(Qt::transparent);
 
     m_renderer->renderScene();
@@ -212,3 +235,5 @@ void SoftwareLayer::grab()
     if (m_recursive)
         markDirtyTexture(); // Continuously update if 'live' and 'recursive'.
 }
+
+QT_END_NAMESPACE

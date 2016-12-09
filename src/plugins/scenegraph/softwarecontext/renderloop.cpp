@@ -16,7 +16,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "renderloop.h"
 
 #include "context.h"
@@ -24,9 +23,13 @@
 #include <QElapsedTimer>
 #include <private/qquickprofiler_p.h>
 #include <QCoreApplication>
+#include <qpa/qplatformbackingstore.h>
+#include <QtGui/QBackingStore>
+#include <renderer.h>
+
+QT_BEGIN_NAMESPACE
 
 RenderLoop::RenderLoop()
-    : eventPending(false)
 {
     sg = QSGContext::createDefaultContext();
     rc = sg->createRenderContext();
@@ -45,6 +48,10 @@ void RenderLoop::show(QQuickWindow *window)
     data.grabOnly = false;
     m_windows[window] = data;
 
+    if (m_backingStores[window] == nullptr) {
+        m_backingStores[window] = new QBackingStore(window);
+    }
+
     maybeUpdate(window);
 }
 
@@ -54,6 +61,10 @@ void RenderLoop::hide(QQuickWindow *window)
         return;
 
     m_windows.remove(window);
+    delete m_backingStores[window];
+    m_backingStores.remove(window);
+    hide(window);
+
     QQuickWindowPrivate *cd = QQuickWindowPrivate::get(window);
     cd->fireAboutToStop();
     cd->cleanupNodesOnShutdown();
@@ -83,9 +94,13 @@ void RenderLoop::renderWindow(QQuickWindow *window)
 
     WindowData &data = const_cast<WindowData &>(m_windows[window]);
 
+    //Resize the backing store if necessary
+    if (m_backingStores[window]->size() != window->size()) {
+        m_backingStores[window]->resize(window->size());
+    }
+
     // ### create QPainter and set up pointer to current window/painter
     SoftwareContext::RenderContext *ctx = static_cast<SoftwareContext::RenderContext*>(cd->context);
-    ctx->currentWindow = window;
     ctx->initializeIfNeeded();
 
     bool alsoSwap = data.updatePending;
@@ -116,18 +131,24 @@ void RenderLoop::renderWindow(QQuickWindow *window)
     if (profileFrames)
         syncTime = renderTimer.nsecsElapsed();
 
+    //Tell the renderer about the windows backing store
+    auto softwareRenderer = static_cast<SoftwareContext::Renderer*>(cd->renderer);
+    if (softwareRenderer)
+        softwareRenderer->setBackingStore(m_backingStores[window]);
+
     cd->renderSceneGraph(window->size());
 
     if (profileFrames)
         renderTime = renderTimer.nsecsElapsed();
 
     if (data.grabOnly) {
-        // #### grabContent = qt_gl_read_framebuffer(window->size() * window->devicePixelRatio(), false, false);
+        grabContent = m_backingStores[window]->handle()->toImage();
         data.grabOnly = false;
     }
 
     if (alsoSwap && window->isVisible()) {
-//        ### gl->swapBuffers(window);
+        //Flush backingstore to window
+        m_backingStores[window]->flush(softwareRenderer->flushRegion());
         cd->fireFrameSwapped();
     }
 
@@ -138,7 +159,7 @@ void RenderLoop::renderWindow(QQuickWindow *window)
     if (QSG_RASTER_LOG_TIME_RENDERLOOP().isDebugEnabled()) {
         static QTime lastFrameTime = QTime::currentTime();
         qCDebug(QSG_RASTER_LOG_TIME_RENDERLOOP,
-                "Frame rendered with 'basic' renderloop in %dms, polish=%d, sync=%d, render=%d, swap=%d, frameDelta=%d",
+                "Frame rendered with 'software' renderloop in %dms, polish=%d, sync=%d, render=%d, swap=%d, frameDelta=%d",
                 int(swapTime / 1000000),
                 int(polishTime / 1000000),
                 int((syncTime - polishTime) / 1000000),
@@ -171,6 +192,7 @@ QImage RenderLoop::grab(QQuickWindow *window)
     renderWindow(window);
 
     QImage grabbed = grabContent;
+    grabbed.detach();
     grabContent = QImage();
     return grabbed;
 }
@@ -183,12 +205,7 @@ void RenderLoop::maybeUpdate(QQuickWindow *window)
         return;
 
     m_windows[window].updatePending = true;
-
-    if (!eventPending) {
-        const int exhaust_delay = 5;
-        m_update_timer = startTimer(exhaust_delay, Qt::PreciseTimer);
-        eventPending = true;
-    }
+    window->requestUpdate();
 }
 
 QSurface::SurfaceType RenderLoop::windowSurfaceType() const
@@ -204,19 +221,9 @@ QSGContext *RenderLoop::sceneGraphContext() const
 }
 
 
-bool RenderLoop::event(QEvent *e)
+void RenderLoop::handleUpdateRequest(QQuickWindow *window)
 {
-    if (e->type() == QEvent::Timer) {
-        eventPending = false;
-        killTimer(m_update_timer);
-        m_update_timer = 0;
-        for (QHash<QQuickWindow *, WindowData>::const_iterator it = m_windows.constBegin();
-             it != m_windows.constEnd(); ++it) {
-            const WindowData &data = it.value();
-            if (data.updatePending)
-                renderWindow(it.key());
-        }
-        return true;
-    }
-    return QObject::event(e);
+    renderWindow(window);
 }
+
+QT_END_NAMESPACE

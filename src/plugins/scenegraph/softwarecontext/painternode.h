@@ -20,10 +20,15 @@
 #ifndef PAINTERNODE_H
 #define PAINTERNODE_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgadaptationlayer_p.h>
 #include <QtQuick/qquickpainteditem.h>
 
 #include <QtGui/QPixmap>
+
+QT_BEGIN_NAMESPACE
 
 class PainterNode : public QSGPainterNode
 {
@@ -67,6 +72,9 @@ public:
 
     void paint();
 
+    void setTextureSize(const QSize &size);
+    QSize textureSize() const { return m_textureSize; }
+
 private:
 
     QQuickPaintedItem::RenderTarget m_preferredRenderTarget;
@@ -89,8 +97,11 @@ private:
     bool m_fastFBOResizing;
     QColor m_fillColor;
     qreal m_contentsScale;
+    QSize m_textureSize;
 
     bool m_dirtyGeometry;
 };
+
+QT_END_NAMESPACE
 
 #endif // PAINTERNODE_H

@@ -16,13 +16,14 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "imagenode.h"
 
 #include "pixmaptexture.h"
 #include "softwarelayer.h"
 #include <QPainter>
 #include <qmath.h>
+
+QT_BEGIN_NAMESPACE
 
 // Helper from widgets/styles/qdrawutil.cpp
 
@@ -343,11 +344,9 @@ void ImageNode::setSubSourceRect(const QRectF &rect)
 
 void ImageNode::setTexture(QSGTexture *texture)
 {
-    if (m_texture != texture) {
-        m_texture = texture;
-        m_cachedMirroredPixmapIsDirty = true;
-        markDirty(DirtyMaterial);
-    }
+    m_texture = texture;
+    m_cachedMirroredPixmapIsDirty = true;
+    markDirty(DirtyMaterial);
 }
 
 void ImageNode::setMirror(bool mirror)
@@ -365,7 +364,7 @@ void ImageNode::setMipmapFiltering(QSGTexture::Filtering /*filtering*/)
 
 void ImageNode::setFiltering(QSGTexture::Filtering filtering)
 {
-    bool smooth = (filtering == QSGTexture::Nearest);
+    bool smooth = (filtering == QSGTexture::Linear);
     if (smooth == m_smooth)
         return;
 
@@ -464,6 +463,11 @@ void ImageNode::paint(QPainter *painter)
     }
 }
 
+QRectF ImageNode::rect() const
+{
+    return m_targetRect;
+}
+
 const QPixmap &ImageNode::pixmap() const
 {
     if (PixmapTexture *pt = qobject_cast<PixmapTexture*>(m_texture)) {
@@ -474,3 +478,5 @@ const QPixmap &ImageNode::pixmap() const
         qFatal("Image used with invalid texture format.");
     }
 }
+
+QT_END_NAMESPACE

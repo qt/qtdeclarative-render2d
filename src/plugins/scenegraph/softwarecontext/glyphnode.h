@@ -20,7 +20,12 @@
 #ifndef GLYPHNODE_H
 #define GLYPHNODE_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgadaptationlayer_p.h>
+
+QT_BEGIN_NAMESPACE
 
 class GlyphNode : public QSGGlyphNode
 {
@@ -45,5 +50,7 @@ private:
     QQuickText::TextStyle m_style;
     QColor m_styleColor;
 };
+
+QT_END_NAMESPACE
 
 #endif // GLYPHNODE_H

@@ -20,7 +20,14 @@
 #ifndef RENDERLOOP_H
 #define RENDERLOOP_H
 
+#define QT_NO_OPENGL_ES_3
+#undef QT_OPENGL_ES_3
+
 #include <private/qsgrenderloop_p.h>
+
+QT_BEGIN_NAMESPACE
+
+class QBackingStore;
 
 class RenderLoop : public QSGRenderLoop
 {
@@ -40,6 +47,7 @@ public:
 
     void maybeUpdate(QQuickWindow *window);
     void update(QQuickWindow *window) { maybeUpdate(window); } // identical for this implementation.
+    void handleUpdateRequest(QQuickWindow *);
 
     void releaseResources(QQuickWindow *) { }
 
@@ -50,23 +58,20 @@ public:
     QSGContext *sceneGraphContext() const;
     QSGRenderContext *createRenderContext(QSGContext *) const { return rc; }
 
-    bool event(QEvent *);
-
     struct WindowData {
         bool updatePending : 1;
         bool grabOnly : 1;
     };
 
     QHash<QQuickWindow *, WindowData> m_windows;
+    QHash<QQuickWindow *, QBackingStore *> m_backingStores;
 
     QSGContext *sg;
     QSGRenderContext *rc;
 
     QImage grabContent;
-    int m_update_timer;
-
-    bool eventPending;
-
 };
+
+QT_END_NAMESPACE
 
 #endif // RENDERLOOP_H
