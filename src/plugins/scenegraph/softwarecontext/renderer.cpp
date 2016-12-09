@@ -88,8 +88,13 @@ void Renderer::render()
         return;
 
     // If there is a backingstore, set the current paint device
-    if (m_backingStore)
+    if (m_backingStore) {
+        // For HiDPI QBackingStores, the paint device is not valid
+        // until begin() has been called. See: QTBUG-55875
+        m_backingStore->beginPaint(QRegion());
         m_paintDevice = m_backingStore->paintDevice();
+        m_backingStore->endPaint();
+    }
 
     QElapsedTimer renderTimer;
 
@@ -120,8 +125,12 @@ void Renderer::render()
     qint64 optimizeRenderListTime = renderTimer.restart();
 
     // If Rendering to a backingstore, prepare it to be updated
-    if (m_backingStore != nullptr)
+    if (m_backingStore != nullptr) {
         m_backingStore->beginPaint(updateRegion);
+        // It is possible that a QBackingStore's paintDevice() will change
+        // when begin() is called.
+        m_paintDevice = m_backingStore->paintDevice();
+    }
 
     QPainter painter(m_paintDevice);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -130,8 +139,9 @@ void Renderer::render()
     m_flushRegion = renderNodes(&painter);
     qint64 renderTime = renderTimer.elapsed();
 
-    if (m_backingStore != nullptr)
+    if (m_backingStore != nullptr) {
         m_backingStore->endPaint();
+    }
 
     qCDebug(lcRenderer) << "render" << m_flushRegion << buildRenderListTime << optimizeRenderListTime << renderTime;
 }
