@@ -107,7 +107,8 @@ void RenderLoop::renderWindow(QQuickWindow *window)
     if (profileFrames)
         polishTime = renderTimer.nsecsElapsed();
     Q_QUICK_SG_PROFILE_SWITCH(QQuickProfiler::SceneGraphPolishFrame,
-                              QQuickProfiler::SceneGraphRenderLoopFrame);
+                              QQuickProfiler::SceneGraphRenderLoopFrame,
+                              QQuickProfiler::SceneGraphPolishPolish);
 
     emit window->afterAnimating();
 
@@ -115,13 +116,15 @@ void RenderLoop::renderWindow(QQuickWindow *window)
 
     if (profileFrames)
         syncTime = renderTimer.nsecsElapsed();
-    Q_QUICK_SG_PROFILE_RECORD(QQuickProfiler::SceneGraphRenderLoopFrame);
+    Q_QUICK_SG_PROFILE_RECORD(QQuickProfiler::SceneGraphRenderLoopFrame,
+                              QQuickProfiler::SceneGraphRenderLoopSync);
 
     cd->renderSceneGraph(window->size());
 
     if (profileFrames)
         renderTime = renderTimer.nsecsElapsed();
-    Q_QUICK_SG_PROFILE_RECORD(QQuickProfiler::SceneGraphRenderLoopFrame);
+    Q_QUICK_SG_PROFILE_RECORD(QQuickProfiler::SceneGraphRenderLoopFrame,
+                              QQuickProfiler::SceneGraphRenderLoopRender);
 
     if (data.grabOnly) {
         grabContent = static_cast<SoftwareContext::Renderer*>(cd->renderer)->backingStore()->handle()->toImage();
@@ -136,7 +139,8 @@ void RenderLoop::renderWindow(QQuickWindow *window)
     qint64 swapTime = 0;
     if (profileFrames)
         swapTime = renderTimer.nsecsElapsed();
-    Q_QUICK_SG_PROFILE_END(QQuickProfiler::SceneGraphRenderLoopFrame);
+    Q_QUICK_SG_PROFILE_END(QQuickProfiler::SceneGraphRenderLoopFrame,
+                           QQuickProfiler::SceneGraphRenderLoopSwap);
 
     if (QSG_RASTER_LOG_TIME_RENDERLOOP().isDebugEnabled()) {
         static QTime lastFrameTime = QTime::currentTime();
